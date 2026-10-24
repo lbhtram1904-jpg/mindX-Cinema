@@ -4,23 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="styles/auth.css">
 </head>
 
 <body>
-    <div class="signup">
+    <div class="form-wrapper">
         <h1>Sign up</h1>
-        <form action="">
-            <input type="text" placeholder="Username">
-            <br>
-            <input type="email" placeholder="Email">
-            <br>
-            <input type="password" placeholder="Password">
-            <br>
+        <form action="#">
+            <div class="form-control">
+                <input id="Username" type="text" placeholder="Username" required />
+            </div>
+            <div class="form-control">
+                <input id="Email" type="email" placeholder="Email" required />
+            </div>
+            <div class="form-control">
+                <input id="Password" type="password" placeholder="Password" required />
+            </div>
             <button type="submit">Sign up</button>
+            <div class="form-help">
+                <div class="remember-me">
+                    <input type="checkbox" id="remember-me" />
+                    <label for="remember-me">Remember me</label>
+                </div>
+                <a href="#">Need help?</a>
+            </div>
         </form>
-        <p>Already have an account? <button>Login</button></p>
+        <p class="signup-text">Already have an account?<a href="login.html">Login now!</a></p>
     </div>
+
+    <script src="scripts/#"></script>
 </body>
 
 </html>
