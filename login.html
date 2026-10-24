@@ -11,12 +11,14 @@
 <body>
     <div class="form-wrapper">
         <h1>Login</h1>
-        <form action="#">
+        <form id="loginForm" novalidate>
             <div class="form-control">
                 <input id="Username" type="text" placeholder="Username" required />
+                <div class="error-message"></div>
             </div>
             <div class="form-control">
                 <input id="password" type="password" placeholder="Password" required />
+                <div class="error-message"></div>
             </div>
             <button type="submit">Login</button>
             <div class="form-help">
@@ -30,7 +32,7 @@
         <p class="signup-text">Need an account? <a href="signup.html">Sign up now!</a></p>
     </div>
 
-    <script src="scripts/#"></script>
+    <script src="scripts/login.js"></script>
 </body>
 
 </html>
