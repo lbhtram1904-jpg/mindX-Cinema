@@ -80,10 +80,16 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (rememberMeCheckbox.checked) {
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ username: matchedUser.username }));
-    } else {
-      localStorage.removeItem(CURRENT_USER_KEY);
+    const currentUser = {
+      username: matchedUser.username,
+      avatar: matchedUser.avatar || '../assets/no-image.svg'
+    };
+
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+
+    if (!rememberMeCheckbox || !rememberMeCheckbox.checked) {
+      // Save the session anyway so the app knows the user is logged in.
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
     }
 
     alert('Login successful!');

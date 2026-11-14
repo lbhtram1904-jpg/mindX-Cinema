@@ -3,11 +3,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const featuredMovie = document.getElementById('featuredMovie');
   const signOutBtn = document.getElementById('signOutBtn');
   const loadingText = document.getElementById('loadingText');
+  const profileBtn = document.getElementById('profileBtn');
+  const userAvatar = document.getElementById('userAvatar');
 
   if (signOutBtn) {
     signOutBtn.addEventListener('click', () => {
       localStorage.removeItem('mindx_current_user');
       window.location.href = 'login.html';
+    });
+  }
+
+  if (profileBtn) {
+    profileBtn.addEventListener('click', () => {
+      window.location.href = 'profile.html';
     });
   }
 
@@ -124,6 +132,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function getCurrentUser() {
+    const current = localStorage.getItem('mindx_current_user');
+    try {
+      return current ? JSON.parse(current) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function getUserFavoriteGenres() {
+    const currentUser = getCurrentUser();
+    if (!currentUser) return [];
+
+    const users = localStorage.getItem('mindx_users');
+    try {
+      const parsed = users ? JSON.parse(users) : [];
+      const user = parsed.find((item) => item.username.toLowerCase() === currentUser.username.toLowerCase());
+      return user && Array.isArray(user.favoriteGenres) ? user.favoriteGenres : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function getRecommendedMovies(list, favoriteGenres) {
+    if (!favoriteGenres.length) return list;
+
+    const normalized = favoriteGenres.map((genre) => genre.toLowerCase());
+    const recommended = list.filter((movie) => {
+      const movieGenres = Array.isArray(movie.genres) ? movie.genres : [];
+      return movieGenres.some((genre) => normalized.includes(String(genre).toLowerCase()));
+    });
+
+    return recommended.length ? recommended : list;
+  }
+
   fetch(window.MindxCinema.MOVIE_API_URL)
     .then((response) => {
       if (!response.ok) throw new Error('API request failed');
@@ -131,10 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then((data) => {
       const list = Array.isArray(data.results) ? data.results.map(normalizeMovie) : [];
+      const favoriteGenres = getUserFavoriteGenres();
+      const recommendedList = getRecommendedMovies(list, favoriteGenres);
 
-      if (list.length > 0) {
-        renderFeaturedMovie(list[0]);
-        renderMovies(list);
+      if (recommendedList.length > 0) {
+        renderFeaturedMovie(recommendedList[0]);
+        renderMovies(recommendedList);
       }
     })
     .catch(() => {
