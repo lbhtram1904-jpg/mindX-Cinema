@@ -1,6 +1,3 @@
-import { TMDB_API_KEY } from "./config.js";
-
-
 const searchQuery = new URLSearchParams(location.search);
 
 
@@ -13,7 +10,7 @@ const query = searchQuery.get("q")?.trim();
       await fetch(
         `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
           query
-        )}&api_key=${TMDB_API_KEY}`
+        )}&api_key=${window.TMDB_API_KEY}`
       )
     ).json();
 
@@ -31,24 +28,27 @@ const query = searchQuery.get("q")?.trim();
     <div
     >
       ${data.results
-        .map(
-          (item) => /*html*/ `
+        .map((item) => {
+          const poster = item.poster_path
+            ? `https://image.tmdb.org/t/p/w200${item.poster_path}`
+            : "../assets/no-image.svg";
+          return /*html*/ `
             <a href="./info.html?id=${item.id}" >
               <div class="movie-card">
                 <img
                   style="width: auto; height: auto; aspect-ratio: 2/3"
                   class="fade-in"
                   onload="this.style.opacity = '1'"
-                  src="https://image.tmdb.org/t/p/w200${item.poster_path}"
-                  alt=""
+                  src="${poster}"
+                  alt="${item.title || item.name}"
                 />
                 <p class="multiline-ellipsis-2">
                   ${item.title || item.name}
                 </p>
               </div>
             </a>
-      `
-        )
+      `;
+        })
         .join("")}
     </div>
   `;
