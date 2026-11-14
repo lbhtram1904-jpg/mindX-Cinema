@@ -7,6 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const emailInput = document.getElementById('Email');
   const passwordInput = document.getElementById('Password');
   const verifyPasswordInput = document.getElementById('verifyPassword');
+  const STORAGE_KEY = 'mindx_users';
+
+  function getUsers() {
+    const users = localStorage.getItem(STORAGE_KEY);
+    try {
+      return users ? JSON.parse(users) : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+  }
 
   function setError(input, message) {
     const errorBox = input.parentElement.querySelector('.error-message');
@@ -87,9 +101,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const validPassword = validatePassword();
     const validVerify = validateVerifyPassword();
 
-    if (validUsername && validEmail && validPassword && validVerify) {
-      alert('Sign up successful!');
-      form.reset();
+    if (!validUsername || !validEmail || !validPassword || !validVerify) {
+      return;
     }
+
+    const users = getUsers();
+    const username = usernameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+
+    const isDuplicateUser = users.some((user) => {
+      return user.username.toLowerCase() === username.toLowerCase() || user.email.toLowerCase() === email.toLowerCase();
+    });
+
+    if (isDuplicateUser) {
+      alert('Username or email already exists. Please try another one.');
+      return;
+    }
+
+    users.push({ username, email, password });
+    saveUsers(users);
+
+    alert('Sign up successful!');
+    form.reset();
+    window.location.href = 'login.html';
   });
 });

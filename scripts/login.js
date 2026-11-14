@@ -5,6 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const usernameInput = document.getElementById('Username');
   const passwordInput = document.getElementById('password');
+  const rememberMeCheckbox = document.getElementById('remember-me');
+  const STORAGE_KEY = 'mindx_users';
+  const CURRENT_USER_KEY = 'mindx_current_user';
+
+  function getUsers() {
+    const users = localStorage.getItem(STORAGE_KEY);
+    try {
+      return users ? JSON.parse(users) : [];
+    } catch (error) {
+      return [];
+    }
+  }
 
   function setError(input, message) {
     const errorBox = input.parentElement.querySelector('.error-message');
@@ -51,9 +63,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const validUsername = validateUsername();
     const validPassword = validatePassword();
 
-    if (validUsername && validPassword) {
-      alert('Login successful!');
-      form.reset();
+    if (!validUsername || !validPassword) {
+      return;
     }
+
+    const users = getUsers();
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    const matchedUser = users.find((user) => {
+      return user.username.toLowerCase() === username.toLowerCase() && user.password === password;
+    });
+
+    if (!matchedUser) {
+      setError(usernameInput, 'Invalid username or password');
+      setError(passwordInput, 'Invalid username or password');
+      return;
+    }
+
+    if (rememberMeCheckbox.checked) {
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ username: matchedUser.username }));
+    } else {
+      localStorage.removeItem(CURRENT_USER_KEY);
+    }
+
+    alert('Login successful!');
+    form.reset();
+    window.location.href = 'index.html';
   });
 });
